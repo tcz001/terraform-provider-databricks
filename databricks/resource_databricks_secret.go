@@ -26,12 +26,14 @@ func resourceDatabricksSecret() *schema.Resource {
 				ForceNew: true,
 			},
 			"string_value": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:      schema.TypeString,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"bytes_value": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:      schema.TypeString,
+				Optional:  true,
+				Sensitive: true,
 			},
 		},
 	}
