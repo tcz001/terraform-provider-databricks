@@ -15,8 +15,10 @@ const (
 )
 
 type Config struct {
-	Domain *string
-	Token  *string
+	Domain                              *string
+	Token                               *string
+	XDatabricksAzureWorkspaceResourceId *string
+	XDatabricksAzureSPManagementToken   *string
 }
 
 type Client struct {
@@ -29,10 +31,12 @@ func (c *Config) Client() (interface{}, error) {
 	var client Client
 
 	opts := apiClient.Options{
-		Domain:     c.Domain,
-		Token:      c.Token,
-		MaxRetries: maxRetries,
-		RetryDelay: retryDelay,
+		Domain:                              c.Domain,
+		Token:                               c.Token,
+		XDatabricksAzureSPManagementToken:   c.XDatabricksAzureSPManagementToken,
+		XDatabricksAzureWorkspaceResourceId: c.XDatabricksAzureWorkspaceResourceId,
+		MaxRetries:                          maxRetries,
+		RetryDelay:                          retryDelay,
 	}
 	cl, err := apiClient.NewClient(opts)
 	if err != nil {
