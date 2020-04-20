@@ -85,5 +85,10 @@ fabric.properties
 !.vscode/extensions.json
 .history
 
+.env*
+.terraform/
+terraform*
+crash.log
+
 
 # End of https://www.gitignore.io/api/go,intellij+all,visualstudiocode
