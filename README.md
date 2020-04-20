@@ -49,6 +49,15 @@ provider "databricks" {
     token = "<your token>"
 }
 
+# Or you can also use Azure's Service Principal
+#provider "databricks" {
+#    domain = "<your-account>.cloud.databricks.com"
+#    client_id = "<your sp app id>"
+#    client_secret = "<your sp secret>"
+#    tenant_id = "<your tenant id>"
+#    workspace = "<your workspace resource id in Azure, etc /subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Databricks/workspaces/${var.databricks_workspace_name}>"
+#}
+
 resource "databricks_notebook" "notebook" {
     path = "/Users/<username>/tf-test"
     language = "PYTHON"
