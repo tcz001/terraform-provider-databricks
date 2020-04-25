@@ -1,6 +1,7 @@
 package databricks
 
 import (
+	"log"
 	"time"
 
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -18,11 +19,13 @@ const (
 )
 
 type Config struct {
-	Domain      *string
-	Token       *string
-	WorkspaceId *string
-	AzCCC       *azAuth.ClientCredentialsConfig
-	DBCCC       *azAuth.ClientCredentialsConfig
+	Domain                            *string
+	Token                             *string
+	WorkspaceId                       *string
+	XDatabricksAzureSPManagementToken *string
+
+	AzCCC *azAuth.ClientCredentialsConfig
+	DBCCC *azAuth.ClientCredentialsConfig
 }
 
 type Client struct {
@@ -43,9 +46,9 @@ func ServicePrincipalToken(ccc *azAuth.ClientCredentialsConfig) (*adal.ServicePr
 func (c *Config) Client() (interface{}, error) {
 	var client Client
 
-	var xDatabricksAzureSPManagementToken *string
 	if c.DBCCC != nil && c.AzCCC != nil {
 		// Get AZ Databricks Token
+		log.Print("[DEBUG] Getting AZ Databricks Token")
 		rsToken, err := ServicePrincipalToken(c.DBCCC)
 		if err != nil {
 			return nil, err
@@ -58,6 +61,7 @@ func (c *Config) Client() (interface{}, error) {
 		c.Token = &rsOAuthToken
 
 		// Get Az Management SP Token
+		log.Print("[DEBUG] Getting Az Management SP Token")
 		azToken, err := ServicePrincipalToken(c.AzCCC)
 		if err != nil {
 			return nil, err
@@ -67,13 +71,23 @@ func (c *Config) Client() (interface{}, error) {
 			return nil, err
 		}
 		oauthToken := azToken.OAuthToken()
-		xDatabricksAzureSPManagementToken = &oauthToken
+		c.XDatabricksAzureSPManagementToken = &oauthToken
+	}
+
+	if c.WorkspaceId != nil {
+		log.Printf("[DEBUG] c.WorkspaceId: %s", *c.WorkspaceId)
+	}
+	if c.Token != nil {
+		log.Printf("[DEBUG] c.Token: %s", *c.Token)
+	}
+	if c.XDatabricksAzureSPManagementToken != nil {
+		log.Printf("[DEBUG] c.xDatabricksAzureSPManagementToken: %s", *c.XDatabricksAzureSPManagementToken)
 	}
 
 	opts := apiClient.Options{
 		Domain:                              c.Domain,
 		Token:                               c.Token,
-		XDatabricksAzureSPManagementToken:   xDatabricksAzureSPManagementToken,
+		XDatabricksAzureSPManagementToken:   c.XDatabricksAzureSPManagementToken,
 		XDatabricksAzureWorkspaceResourceId: c.WorkspaceId,
 		MaxRetries:                          maxRetries,
 		RetryDelay:                          retryDelay,

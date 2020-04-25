@@ -1,6 +1,8 @@
 package databricks
 
 import (
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 
 	azAuth "github.com/Azure/go-autorest/autorest/azure/auth"
@@ -65,36 +67,39 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	if token, ok := d.GetOk("token"); ok {
+		// Token authentication
+		log.Print("[DEBUG] Token authentication")
 		s := token.(string)
 		config.Token = &s
-	}
-
-	if workspaceId, ok := d.GetOk("workspace_id"); ok {
+		config.DBCCC = nil
+		config.AzCCC = nil
+	} else if workspaceId, ok := d.GetOk("workspace_id"); ok {
 		s := workspaceId.(string)
 		config.WorkspaceId = &s
-	}
+		// Azure Client Credentials authentication
+		log.Print("[DEBUG] Azure Client Credentials authentication")
+		var clientID, clientSecret, tenantID string
 
-	var clientID, clientSecret, tenantID string
+		if s, ok := d.GetOk("client_id"); ok {
+			clientID = s.(string)
+		}
 
-	if s, ok := d.GetOk("client_id"); ok {
-		clientID = s.(string)
-	}
+		if s, ok := d.GetOk("client_secret"); ok {
+			clientSecret = s.(string)
+		}
 
-	if s, ok := d.GetOk("client_secret"); ok {
-		clientSecret = s.(string)
-	}
+		if s, ok := d.GetOk("tenant_id"); ok {
+			tenantID = s.(string)
+		}
 
-	if s, ok := d.GetOk("tenant_id"); ok {
-		tenantID = s.(string)
-	}
-
-	if clientID != "" && clientSecret != "" && tenantID != "" {
-		dbccc := azAuth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
-		dbccc.Resource = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d"
-		azccc := azAuth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
-		azccc.Resource = "https://management.core.windows.net/"
-		config.DBCCC = &dbccc
-		config.AzCCC = &azccc
+		if clientID != "" && clientSecret != "" && tenantID != "" {
+			dbccc := azAuth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
+			dbccc.Resource = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d"
+			azccc := azAuth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
+			azccc.Resource = "https://management.core.windows.net/"
+			config.DBCCC = &dbccc
+			config.AzCCC = &azccc
+		}
 	}
 
 	return config.Client()
