@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	azAuth "github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/tcz001/databricks-sdk-go/api/clusters"
+	scim "github.com/tcz001/databricks-sdk-go/api/scim"
 	secrets "github.com/tcz001/databricks-sdk-go/api/secrets"
 	token "github.com/tcz001/databricks-sdk-go/api/token"
 	"github.com/tcz001/databricks-sdk-go/api/workspace"
@@ -33,6 +34,7 @@ type Client struct {
 	workspace *workspace.Endpoint
 	secrets   *secrets.Endpoint
 	token     *token.Endpoint
+	scim      *scim.Endpoint
 }
 
 func ServicePrincipalToken(ccc *azAuth.ClientCredentialsConfig) (*adal.ServicePrincipalToken, error) {
@@ -101,6 +103,7 @@ func (c *Config) Client() (interface{}, error) {
 	client.workspace = &workspace.Endpoint{Client: cl}
 	client.secrets = &secrets.Endpoint{Client: cl}
 	client.token = &token.Endpoint{Client: cl}
+	client.scim = &scim.Endpoint{Client: cl}
 
 	return &client, nil
 }

@@ -9,9 +9,6 @@
 
 package models
 
-type TokenInfo struct {
-	TokenId      string `json:"token_id,omitempty"`
-	CreationTime int64  `json:"creation_time,omitempty"`
-	ExpiryTime   int64  `json:"expiry_time,omitempty"`
-	Comment      string `json:"comment,omitempty"`
+type Entitlements struct {
+	Value string `json:"value,omitempty"`
 }

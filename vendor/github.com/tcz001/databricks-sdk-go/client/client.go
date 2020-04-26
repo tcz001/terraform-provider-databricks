@@ -166,7 +166,10 @@ func (c *Client) parseResponse(response http.Response) ([]byte, error) {
 
 	glog.Infof("Response bytes: %s", responseBytes)
 
-	if response.StatusCode != 200 {
+	if response.StatusCode == 204 {
+		return nil, nil
+	}
+	if response.StatusCode != 200 && response.StatusCode != 201 {
 		errorResponse := models.ErrorResponse{}
 
 		if strings.Contains(response.Header.Get("Content-Type"), "json") {

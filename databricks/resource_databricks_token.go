@@ -98,7 +98,6 @@ func resourceDatabricksTokenRevoke(d *schema.ResourceData, m interface{}) error 
 	}
 
 	d.SetId("")
-	d.SetId("")
 
 	return nil
 }

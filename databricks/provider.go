@@ -48,11 +48,12 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"databricks_cluster":      resourceDatabricksCluster(),
-			"databricks_notebook":     resourceDatabricksNotebook(),
-			"databricks_secret_scope": resourceDatabricksSecretScope(),
-			"databricks_secret":       resourceDatabricksSecret(),
-			"databricks_token":        resourceDatabricksToken(),
+			"databricks_cluster":           resourceDatabricksCluster(),
+			"databricks_notebook":          resourceDatabricksNotebook(),
+			"databricks_secret_scope":      resourceDatabricksSecretScope(),
+			"databricks_secret":            resourceDatabricksSecret(),
+			"databricks_token":             resourceDatabricksToken(),
+			"databricks_service_principal": resourceDatabricksServicePrincipal(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
