@@ -39,4 +39,8 @@ func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("DATABRICKS_WORKSPACE"); v == "" {
 		t.Fatal("DATABRICKS_WORKSPACE must be set for acceptance tests")
 	}
+
+	if v := os.Getenv("DATABRICKS_SP_MGMT_TOKEN"); v == "" {
+		t.Fatal("DATABRICKS_SP_MGMT_TOKEN must be set for acceptance tests")
+	}
 }
