@@ -140,8 +140,8 @@ func resourceDatabricksScimUserExpandEmails(emails []interface{}) []models.Email
 		emailElem := v.(map[string]interface{})
 		emailList = append(emailList,
 			models.Emails{
-				Type_: emailElem["type"].(string),
-				Value: emailElem["value"].(string),
+				Type_:   emailElem["type"].(string),
+				Value:   emailElem["value"].(string),
 				Primary: emailElem["primary"].(bool),
 			})
 	}
@@ -153,8 +153,8 @@ func resourceDatabricksScimUserFlattenEmails(emails []models.Emails) []map[strin
 	result := make([]map[string]interface{}, 0)
 	for _, v := range emails {
 		result = append(result, map[string]interface{}{
-			"value": v.Value,
-			"type": v.Type_,
+			"value":   v.Value,
+			"type":    v.Type_,
 			"primary": v.Primary,
 		})
 	}
@@ -168,10 +168,8 @@ func resourceDatabricksUserCreate(d *schema.ResourceData, m interface{}) error {
 
 	request := models.ScimUser{
 		DisplayName: d.Get("display_name").(string),
-		UserName: d.Get("userName").(string),
+		UserName:    d.Get("username").(string),
 	}
-
-
 
 	if v, ok := d.GetOk("groups"); ok {
 		request.Groups = resourceDatabricksScimUserExpandGroup(v.(*schema.Set).List())
@@ -230,7 +228,7 @@ func resourceDatabricksUserUpdate(d *schema.ResourceData, m interface{}) error {
 	request := models.ScimUser{
 		Id:          d.Id(),
 		DisplayName: d.Get("display_name").(string),
-		Active: 	 d.Get("active").(bool),
+		Active:      d.Get("active").(bool),
 	}
 
 	if v, ok := d.GetOk("groups"); ok {
@@ -262,7 +260,6 @@ func resourceDatabricksUserUpdate(d *schema.ResourceData, m interface{}) error {
 	d.Set("members", resourceDatabricksScimUserFlattenEmails(resp.Emails))
 	d.Set("display_name", resp.DisplayName)
 	d.Set("active", resp.Active)
-
 
 	return nil
 }
