@@ -58,6 +58,11 @@ provider "databricks" {
 #    workspace_id = "<your workspace resource id in Azure, etc /subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Databricks/workspaces/${var.databricks_workspace_name}>"
 #}
 
+resource "databricks_token" "token" {
+  comment          = "PATtoken"
+  lifetime_seconds = 3600 * 24 * 90
+}
+
 resource "databricks_notebook" "notebook" {
     path = "/Users/<username>/tf-test"
     language = "PYTHON"
@@ -77,6 +82,44 @@ resource "databricks_cluster" "cluster" {
         ebs_volume_count = 1
         ebs_volume_size  = 100
     }    
+}
+
+resource "databricks_secret_scope" "secret_scope" {
+  name = "test"
+}
+
+resource "databricks_secret" "secret" {
+  scope        = databricks_secret_scope.secret_scope.name
+  key          = "test-secret"
+  string_value = "hello world"
+}
+
+resource "databricks_group" "grp" {
+  display_name   = "groupname"
+}
+
+resource "databricks_user" "user" {
+  username = "someone@example.com"
+  display_name   = "somedisplayname"
+  groups {
+    value = databricks_group.grp.display_name
+  }
+}
+
+resource "databricks_user" "user" {
+  username = "someone@example.com"
+  display_name   = "somedisplayname"
+  groups {
+    value = databricks_group.grp.display_name
+  }
+}
+
+resource "databricks_service_principal" "sp" {
+  application_id = "service_principal_client_id"
+  display_name   = "somespdisplayname"
+  groups {
+    value = databricks_group.grp.display_name
+  }
 }
 ```
 
