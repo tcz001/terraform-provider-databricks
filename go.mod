@@ -27,7 +27,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
-	github.com/tcz001/databricks-sdk-go v0.0.0-20200429091749-3068445655c8
+	github.com/tcz001/databricks-sdk-go v0.0.0-20200507011056-3c2fb962b1d5
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/zclconf/go-cty v1.4.0 // indirect
