@@ -1,9 +1,13 @@
 TEST?=$$(go list ./... |grep -v 'vendor')
+GOFLAGS=-mod=vendor
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
 default: build
 
 build: fmtcheck
+	go build
+
+install: fmtcheck
 	go install
 
 test: fmtcheck

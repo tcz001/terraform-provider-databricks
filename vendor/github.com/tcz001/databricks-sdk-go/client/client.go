@@ -38,8 +38,8 @@ type Client struct {
 func NewClient(opts Options) (*Client, error) {
 	loadEnvConfig(&opts)
 
-	if opts.Domain == nil || opts.Token == nil {
-		return nil, fmt.Errorf("missing credentials")
+	if opts.Domain == nil {
+		return nil, fmt.Errorf("missing Domain")
 	}
 
 	if opts.XDatabricksAzureWorkspaceResourceId != nil && (opts.Token == nil || opts.XDatabricksAzureSPManagementToken == nil) {
@@ -56,7 +56,9 @@ func NewClient(opts Options) (*Client, error) {
 	}
 
 	header := http.Header{}
-	header.Add("Authorization", fmt.Sprintf("Bearer %s", *opts.Token))
+	if opts.Token != nil {
+		header.Add("Authorization", fmt.Sprintf("Bearer %s", *opts.Token))
+	}
 	if opts.XDatabricksAzureWorkspaceResourceId != nil && opts.XDatabricksAzureSPManagementToken != nil {
 		header.Add("X-Databricks-Azure-SP-Management-Token", fmt.Sprintf(*opts.XDatabricksAzureSPManagementToken))
 		header.Add("X-Databricks-Azure-Workspace-Resource-Id", fmt.Sprintf(*opts.XDatabricksAzureWorkspaceResourceId))
@@ -155,10 +157,10 @@ func (c *Client) makeRequest(request *http.Request) ([]byte, error) {
 
 	defer response.Body.Close()
 
-	return c.parseResponse(*response)
+	return c.parseResponse(request, *response)
 }
 
-func (c *Client) parseResponse(response http.Response) ([]byte, error) {
+func (c *Client) parseResponse(request *http.Request, response http.Response) ([]byte, error) {
 	responseBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
@@ -179,7 +181,7 @@ func (c *Client) parseResponse(response http.Response) ([]byte, error) {
 			}
 		} else {
 			errorResponse.Message = fmt.Sprintf(
-				"request error: %s", string(responseBytes))
+				"databricks request: %v %#v error: %#v %s", request.URL, request, response, string(responseBytes))
 		}
 
 		return nil, NewError(errorResponse, response.StatusCode)

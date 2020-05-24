@@ -55,7 +55,7 @@ func Provider() *schema.Provider {
 			"databricks_token":             resourceDatabricksToken(),
 			"databricks_service_principal": resourceDatabricksServicePrincipal(),
 			"databricks_group":             resourceDatabricksGroup(),
-			"databricks_user":             	resourceDatabricksUser(),
+			"databricks_user":              resourceDatabricksUser(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
